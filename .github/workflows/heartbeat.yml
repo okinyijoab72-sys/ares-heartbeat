@@ -1,0 +1,21 @@
+# Wakes Project ARES every 10 minutes so due reminders, follow-ups and alerts go out on time.
+name: ARES heartbeat
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Run the ARES scheduler
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: curl -fsS -m 90 -H "Authorization: Bearer $CRON_SECRET" https://joab-ares.vercel.app/api/tick
+  keepalive:
+    # GitHub pauses schedules in repos with no commits for 60 days: one empty commit a month prevents that.
+    if: github.event.schedule == '*/10 * * * *' && startsWith(github.run_started_at, '') && false
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo unused
