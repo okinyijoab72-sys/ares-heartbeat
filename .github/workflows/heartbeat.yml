@@ -14,7 +14,8 @@ jobs:
       - name: Run the ARES scheduler
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
-        run: curl -fsS -m 90 -H "Authorization: Bearer $CRON_SECRET" https://joab-ares.vercel.app/api/tick
+        run: |
+          curl -fsS -m 90 -H "Authorization: Bearer $CRON_SECRET" https://joab-ares.vercel.app/api/tick
   keepalive:
     # GitHub pauses schedules in repos with no commits for 60 days: one empty commit a month prevents that.
     if: github.event.schedule == '0 6 1 * *'
